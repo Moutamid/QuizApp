@@ -351,5 +351,6 @@
     <string name="native_unit_id">ca-app-pub-6625342281878240/9865057518</string>
     <string name="admob_openads_id">ca-app-pub-6625342281878240/1012796550</string>
     <string name="levea_msg3">Are you sure you want to leave Practice Quiz?</string>
+    <string name="one_login_str">You can only login 1 account at a time on one single device</string>
 
 </resources>

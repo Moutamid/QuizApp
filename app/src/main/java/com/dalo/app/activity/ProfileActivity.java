@@ -630,8 +630,7 @@ public class ProfileActivity extends AppCompatActivity {
                 LoginTabActivity.mAuth.signOut();
                 FirebaseAuth.getInstance().signOut();
                 DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
-                databaseReference.child("sessions")
-                        .child(LoginTabActivity.mAuth.getUid()).setValue(false);
+
                 Intent intentLogin = new Intent(ProfileActivity.this, LoginTabActivity.class);
                 intentLogin.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intentLogin.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

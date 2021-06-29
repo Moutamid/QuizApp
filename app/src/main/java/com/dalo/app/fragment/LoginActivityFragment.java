@@ -14,6 +14,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextPaint;
@@ -159,33 +160,37 @@ public class LoginActivityFragment extends Fragment {
 
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
-                                    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
                                     databaseReference.child("sessions").child(user.getUid())
                                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    if (snapshot.exists()){
-                                                        if (snapshot.getValue(Boolean.class)){
-                                                            // ALREADY LOGGED IN.
-                                                            // BREAK SESSION
-                                                            FirebaseAuth.getInstance().signOut();
-                                                            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                            alertDialog.setTitle("You are already logged in!");
-                                                            alertDialog.setPositiveButton("Sign out", new DialogInterface.OnClickListener() {
-                                                                @Override
-                                                                public void onClick(DialogInterface dialog, int which) {
-                                                                    dialog.cancel();
-                                                                }
-                                                            });
-                                                            alertDialog.show();
-                                                            return;
-                                                        }
+                                                    if (!snapshot.exists()) {
+                                                        databaseReference.child("sessions")
+                                                                .child(LoginTabActivity.mAuth.getUid()).setValue(getDeviceId());
+
+                                                        continueLogin();
+                                                        return;
                                                     }
 
+                                                    if (snapshot.getValue(String.class).equals(getDeviceId()))
+                                                        continueLogin();
+                                                    else {
+                                                        FirebaseAuth.getInstance().signOut();
+                                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                                                        alertDialog.setTitle(getString(R.string.one_login_str));
+                                                        alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                                            @Override
+                                                            public void onClick(DialogInterface dialog, int which) {
+                                                                dialog.cancel();
+                                                            }
+                                                        });
+                                                        alertDialog.show();
+                                                    }
+                                                }
+
+                                                private void continueLogin() {
                                                     // CONTINUE LOGIN LOGIC
-                                                    databaseReference.child("sessions")
-                                                            .child(LoginTabActivity.mAuth.getUid()).setValue(true);
                                                     assert user != null;
                                                     String personName = user.getDisplayName() + "";
 
@@ -269,14 +274,14 @@ public class LoginActivityFragment extends Fragment {
                         new FacebookCallback<LoginResult>() {
                             @Override
                             public void onSuccess(LoginResult loginResult) {
-                               // System.out.println("=====sucess login fb");
+                                // System.out.println("=====sucess login fb");
                                 getActivity().setResult(RESULT_OK);
                                 handleFacebookAccessToken(loginResult.getAccessToken());
                             }
 
                             @Override
                             public void onCancel() {
-                               // System.out.println("=====cancel login fb");
+                                // System.out.println("=====cancel login fb");
                                 hideProgressDialog();
                             }
 
@@ -318,7 +323,6 @@ public class LoginActivityFragment extends Fragment {
         GetUpadate(getActivity());
 
 
-
         return v;
     }
 
@@ -332,7 +336,7 @@ public class LoginActivityFragment extends Fragment {
         languageView.setLayoutManager(new LinearLayoutManager(activity));
         alertDialog = dialog.create();
 
-            alertDialog.show();
+        alertDialog.show();
         alertDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         Utils.GetLanguage(languageView, activity, alertDialog);
     }
@@ -550,7 +554,7 @@ public class LoginActivityFragment extends Fragment {
                 if (result) {
                     try {
                         JSONObject obj = new JSONObject(response);
-                        System.out.println("Values::="+response);
+                        System.out.println("Values::=" + response);
                         if (obj.getString("error").equals("false")) {
                             JSONObject jsonobj = obj.getJSONObject("data");
                             if (!jsonobj.getString(Constant.status).equals(Constant.DE_ACTIVE)) {
@@ -601,38 +605,40 @@ public class LoginActivityFragment extends Fragment {
                         try {
                             if (task.isSuccessful()) {
 
-                                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
                                 databaseReference.child("sessions").child(LoginTabActivity.mAuth.getUid())
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
+
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                if (snapshot.exists()){
-                                                    if (snapshot.getValue(Boolean.class)){
-                                                        // ALREADY LOGGED IN.
-                                                        // BREAK SESSION
+                                                if (!snapshot.exists()) {
+                                                    databaseReference.child("sessions")
+                                                            .child(LoginTabActivity.mAuth.getUid()).setValue(getDeviceId());
 
-                                                        LoginManager.getInstance().logOut();
-                                                        LoginTabActivity.mAuth.signOut();
-                                                        hideProgressDialog();
-                                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                        alertDialog.setTitle("You are already logged in!");
-                                                        alertDialog.setPositiveButton("Sign out", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.cancel();
-                                                            }
-                                                        });
-                                                        alertDialog.show();
-
-                                                        return;
-                                                    }
+                                                    continueLogin();
+                                                    return;
                                                 }
 
+                                                if (snapshot.getValue(String.class).equals(getDeviceId()))
+                                                    continueLogin();
+                                                else {
+                                                    FirebaseAuth.getInstance().signOut();
+                                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                                                    alertDialog.setTitle(getString(R.string.one_login_str));
+                                                    alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                                        @Override
+                                                        public void onClick(DialogInterface dialog, int which) {
+                                                            dialog.cancel();
+                                                        }
+                                                    });
+                                                    alertDialog.show();
+                                                }
+
+                                            }
+
+                                            private void continueLogin() {
                                                 // CONTINUE LOGIN LOGIC
                                                 //Sign in success, update UI with the signed-in user's information
-                                                databaseReference.child("sessions")
-                                                        .child(LoginTabActivity.mAuth.getUid()).setValue(true);
                                                 boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
                                                 FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
                                                 assert user != null;
@@ -705,38 +711,38 @@ public class LoginActivityFragment extends Fragment {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
 
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
 
                             databaseReference.child("sessions").child(LoginTabActivity.mAuth.getUid())
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if (snapshot.exists()){
-                                                if (snapshot.getValue(Boolean.class)){
-                                                    // ALREADY LOGGED IN.
-                                                    // BREAK SESSION
+                                            if (!snapshot.exists()) {
+                                                databaseReference.child("sessions")
+                                                        .child(LoginTabActivity.mAuth.getUid()).setValue(getDeviceId());
 
-                                                    LoginManager.getInstance().logOut();
-                                                    LoginTabActivity.mAuth.signOut();
-                                                    hideProgressDialog();
-                                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                    alertDialog.setTitle("You are already logged in!");
-                                                    alertDialog.setPositiveButton("Sign out", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.cancel();
-                                                        }
-                                                    });
-                                                    alertDialog.show();
-
-                                                    return;
-                                                }
+                                                continueLogin();
+                                                return;
                                             }
 
+                                            if (snapshot.getValue(String.class).equals(getDeviceId()))
+                                                continueLogin();
+                                            else {
+                                                FirebaseAuth.getInstance().signOut();
+                                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                                                alertDialog.setTitle(getString(R.string.one_login_str));
+                                                alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.cancel();
+                                                    }
+                                                });
+                                                alertDialog.show();
+                                            }
+                                        }
+
+                                        private void continueLogin() {
                                             // CONTINUE LOGIN LOGIC
                                             //Sign in success, update UI with the signed-in user's information
-                                            databaseReference.child("sessions")
-                                                    .child(LoginTabActivity.mAuth.getUid()).setValue(true);
                                             boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
                                             FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
 
@@ -755,6 +761,7 @@ public class LoginActivityFragment extends Fragment {
                                                 ShowReferDialog(user.getUid(), userName[0] + id, personName, email, user.getPhotoUrl().toString(), "gmail");
                                             } else
                                                 UserSignUpWithSocialMedia(user.getUid(), "", userName[0] + id, user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), "gmail");
+
                                         }
 
                                         @Override
@@ -948,7 +955,7 @@ public class LoginActivityFragment extends Fragment {
                 }
 
                 final String phoneNumber = "+" + code + number;
-               // System.out.println("valuesGet::=" + phoneNumber);
+                // System.out.println("valuesGet::=" + phoneNumber);
                 sendVerificationCode(phoneNumber);
 
 
@@ -1021,34 +1028,35 @@ public class LoginActivityFragment extends Fragment {
                         if (task.isSuccessful()) {
                             FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
 
-                            DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
                             databaseReference.child("sessions").child(user.getUid())
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if (snapshot.exists()){
-                                                if (snapshot.getValue(Boolean.class)){
-                                                    // ALREADY LOGGED IN.
-                                                    // BREAK SESSION
-                                                    hideProgressDialog();
-                                                    FirebaseAuth.getInstance().signOut();
-                                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                    alertDialog.setTitle("You are already logged in!");
-                                                    alertDialog.setPositiveButton("Sign out", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.cancel();
-                                                        }
-                                                    });
-                                                    alertDialog.show();
-                                                    return;
-                                                }
+                                            if (!snapshot.exists()) {
+                                                databaseReference.child("sessions")
+                                                        .child(LoginTabActivity.mAuth.getUid()).setValue(getDeviceId());
+
+                                                UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
+
+                                                return;
                                             }
 
-                                            // CONTINUE LOGIN LOGIC
-                                            databaseReference.child("sessions")
-                                                    .child(LoginTabActivity.mAuth.getUid()).setValue(true);
-                                            UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
+                                            if (snapshot.getValue(String.class).equals(getDeviceId()))
+                                                UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
+
+                                            else {
+                                                FirebaseAuth.getInstance().signOut();
+                                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                                                alertDialog.setTitle(getString(R.string.one_login_str));
+                                                alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                                    @Override
+                                                    public void onClick(DialogInterface dialog, int which) {
+                                                        dialog.cancel();
+                                                    }
+                                                });
+                                                alertDialog.show();
+                                            }
+
 
                                         }
 
@@ -1098,14 +1106,14 @@ public class LoginActivityFragment extends Fragment {
     /*            WifiManager wm = (WifiManager) getActivity().getSystemService(WIFI_SERVICE);
                 String ip = Formatter.formatIpAddress(wm.getConnectionInfo().getIpAddress());*/
         params.put(Constant.ipAddress, "0.0.0.0");
-      //  System.out.println("---params social  " + params.toString());
+        //  System.out.println("---params social  " + params.toString());
         ApiConfig.RequestToVolley(new ApiConfig.VolleyCallback() {
             @Override
             public void onSuccess(boolean result, String response) {
 
                 if (result) {
                     try {
-                       // System.out.println("Response ::=" + response);
+                        // System.out.println("Response ::=" + response);
                         JSONObject obj = new JSONObject(response);
                         if (obj.getString("error").equals("false")) {
                             JSONObject jsonobj = obj.getJSONObject("data");
@@ -1289,8 +1297,7 @@ public class LoginActivityFragment extends Fragment {
         snackbar.setAction(getString(R.string.ok), new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                databaseReference.child("sessions")
-                        .child(LoginTabActivity.mAuth.getUid()).setValue(false);
+
                 Session.clearUserSession(getActivity());
                 LoginTabActivity.mAuth.signOut();
                 LoginManager.getInstance().logOut();
@@ -1329,4 +1336,9 @@ public class LoginActivityFragment extends Fragment {
             mCallbackManager.onActivityResult(requestCode, resultCode, data);
         }
     }
+
+    private String getDeviceId() {
+        return Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
 }
