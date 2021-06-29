@@ -161,19 +161,19 @@ public class LoginActivityFragment extends Fragment {
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
 
-                                    databaseReference.child("sessions").child(user.getUid())
+                                    databaseReference.child("sessions").child(getDeviceId())
                                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                     if (!snapshot.exists()) {
                                                         databaseReference.child("sessions")
-                                                                .child(LoginTabActivity.mAuth.getUid()).setValue(getDeviceId());
+                                                                .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
 
                                                         continueLogin();
                                                         return;
                                                     }
 
-                                                    if (snapshot.getValue(String.class).equals(getDeviceId()))
+                                                    if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
                                                         continueLogin();
                                                     else {
                                                         FirebaseAuth.getInstance().signOut();
@@ -606,20 +606,20 @@ public class LoginActivityFragment extends Fragment {
                             if (task.isSuccessful()) {
 
 
-                                databaseReference.child("sessions").child(LoginTabActivity.mAuth.getUid())
+                                databaseReference.child("sessions").child(getDeviceId())
                                         .addListenerForSingleValueEvent(new ValueEventListener() {
 
                                             @Override
                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                 if (!snapshot.exists()) {
                                                     databaseReference.child("sessions")
-                                                            .child(LoginTabActivity.mAuth.getUid()).setValue(getDeviceId());
+                                                            .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
 
                                                     continueLogin();
                                                     return;
                                                 }
 
-                                                if (snapshot.getValue(String.class).equals(getDeviceId()))
+                                                if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
                                                     continueLogin();
                                                 else {
                                                     FirebaseAuth.getInstance().signOut();
@@ -712,19 +712,19 @@ public class LoginActivityFragment extends Fragment {
                         if (task.isSuccessful()) {
 
 
-                            databaseReference.child("sessions").child(LoginTabActivity.mAuth.getUid())
+                            databaseReference.child("sessions").child(getDeviceId())
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             if (!snapshot.exists()) {
                                                 databaseReference.child("sessions")
-                                                        .child(LoginTabActivity.mAuth.getUid()).setValue(getDeviceId());
+                                                        .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
 
                                                 continueLogin();
                                                 return;
                                             }
 
-                                            if (snapshot.getValue(String.class).equals(getDeviceId()))
+                                            if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
                                                 continueLogin();
                                             else {
                                                 FirebaseAuth.getInstance().signOut();
@@ -1028,20 +1028,20 @@ public class LoginActivityFragment extends Fragment {
                         if (task.isSuccessful()) {
                             FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
 
-                            databaseReference.child("sessions").child(user.getUid())
+                            databaseReference.child("sessions").child(getDeviceId())
                                     .addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             if (!snapshot.exists()) {
                                                 databaseReference.child("sessions")
-                                                        .child(LoginTabActivity.mAuth.getUid()).setValue(getDeviceId());
+                                                        .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
 
                                                 UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
 
                                                 return;
                                             }
 
-                                            if (snapshot.getValue(String.class).equals(getDeviceId()))
+                                            if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
                                                 UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
 
                                             else {
