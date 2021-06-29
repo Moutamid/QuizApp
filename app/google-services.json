@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "352546768567",
+    "firebase_url": "https://dalo-app-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "dalo-app",
+    "storage_bucket": "dalo-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:352546768567:android:e088ce2b4847983d81af32",
+        "android_client_info": {
+          "package_name": "com.dalo.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "352546768567-1s9kljl5hgstk1q5h2gg4lvclr878940.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.dalo.app",
+            "certificate_hash": "ea388c057f6d9d46243de4e88e2fe3db4767e0a2"
+          }
+        },
+        {
+          "client_id": "352546768567-m84ictjn0lfishkrtkv0j5l8hofkb9cv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAty3GGzkqTrsXLrv3GrKGDmfnTXs2Y304"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "352546768567-m84ictjn0lfishkrtkv0j5l8hofkb9cv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
