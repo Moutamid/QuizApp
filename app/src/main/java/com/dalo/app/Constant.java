@@ -6,7 +6,8 @@ public class Constant {
     public static String QUIZ_URL = DOMAIN_URL + "api-v2.php";  //api url
     /////// PARAMETERS  ///////
     public static String AUTHORIZATION = "Authorization";
-    public static String JWT_KEY = "gSSQza7824234cccsdcsdt66b2LCFs";
+    public static String JWT_KEY = "e1FTl242jcsdjK1DrV27BuRZO2JpS2020";
+//    public static String JWT_KEY = "gSSQza7824234cccsdcsdt66b2LCFs";
     public static String accessKey = "access_key";
     public static String accessKeyValue = "6808";
     public static String name = "name";

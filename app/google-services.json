@@ -15,33 +15,30 @@
       },
       "oauth_client": [
         {
-          "client_id": "352546768567-1s9kljl5hgstk1q5h2gg4lvclr878940.apps.googleusercontent.com",
+          "client_id": "352546768567-hpsqh077ip30lvv0s106v1l74rntgj51.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.dalo.app",
-            "certificate_hash": "ea388c057f6d9d46243de4e88e2fe3db4767e0a2"
+            "certificate_hash": "9101165605e241ae3eb60a04a162107320df923c"
           }
-        },
-        {
-          "client_id": "352546768567-m84ictjn0lfishkrtkv0j5l8hofkb9cv.apps.googleusercontent.com",
-          "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAty3GGzkqTrsXLrv3GrKGDmfnTXs2Y304"
+          "current_key": "AIzaSyCZyHW-dKvJGNK7P66cBbq_jt6-RahgdC4"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "352546768567-m84ictjn0lfishkrtkv0j5l8hofkb9cv.apps.googleusercontent.com",
+              "client_id": "352546768567-eveks9mud4acp64ouajv6ik5dec5mjqp.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-6625342281878240~9706508940"
     }
   ],
   "configuration_version": "1"
