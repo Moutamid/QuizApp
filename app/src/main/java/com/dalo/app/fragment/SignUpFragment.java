@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +32,11 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.dalo.app.R;
 import com.dalo.app.activity.LoginTabActivity;
 import com.dalo.app.helper.Session;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.Objects;
 
@@ -58,7 +64,7 @@ public class SignUpFragment extends Fragment {
         inputName = (TextInputLayout) v.findViewById(R.id.inputName);
         inputEmail = (TextInputLayout) v.findViewById(R.id.inputEmail);
         inputPass = (TextInputLayout) v.findViewById(R.id.inputPass);
-        signupryt=(CardView) v.findViewById(R.id.signupryt);
+        signupryt = (CardView) v.findViewById(R.id.signupryt);
 
         signupryt.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -72,42 +78,61 @@ public class SignUpFragment extends Fragment {
                 final String password = edtPassword.getText().toString();
                 final String name = edtName.getText().toString();
 
+                DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+                databaseReference.child("sessions").child(getDeviceId())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
 
-                mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(name).build();
-                            assert user != null;
-                            user.updateProfile(profileUpdates)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    hideProgressDialog();
+                                    Toast.makeText(getActivity(), "This device has already been registered!", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
                                         @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
+                                                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                                        .setDisplayName(name).build();
+                                                assert user != null;
+                                                user.updateProfile(profileUpdates)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                if (task.isSuccessful()) {
+                                                                }
+                                                            }
+                                                        });
+
+                                                sendEmailVerification();
+                                            } else {
+                                                hideProgressDialog();
+
+                                                try {
+                                                    throw Objects.requireNonNull(task.getException());
+                                                } catch (FirebaseAuthInvalidCredentialsException | FirebaseAuthInvalidUserException | FirebaseAuthUserCollisionException invalidEmail) {
+                                                    inputEmail.setError(invalidEmail.getMessage());
+
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                    inputEmail.setError(e.getMessage());
+                                                }
+
                                             }
+
                                         }
                                     });
-
-                            sendEmailVerification();
-                        } else {
-                            hideProgressDialog();
-
-                            try {
-                                throw Objects.requireNonNull(task.getException());
-                            } catch (FirebaseAuthInvalidCredentialsException | FirebaseAuthInvalidUserException | FirebaseAuthUserCollisionException invalidEmail) {
-                                inputEmail.setError(invalidEmail.getMessage());
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                inputEmail.setError(e.getMessage());
+                                }
                             }
 
-                        }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                hideProgressDialog();
+                                Toast.makeText(getActivity(), error.toException().getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
 
-                    }
-                });
             }
         });
 
@@ -119,6 +144,10 @@ public class SignUpFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         return v;
+    }
+
+    private String getDeviceId() {
+        return Settings.Secure.getString(getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
     }
 
     public void ForgotPassword(View view) {
