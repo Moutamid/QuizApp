@@ -118,7 +118,7 @@ public class LoginActivityFragment extends Fragment {
     CardView loginrlyt;
     AlertDialog alertDialog;
     RelativeLayout googleryt, faceookryt, mobileryt;
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
+    //    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference();
     private BottomSheetDialog bottomSheetDialog;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallBack;
 
@@ -161,74 +161,74 @@ public class LoginActivityFragment extends Fragment {
                                 if (task.isSuccessful()) {
                                     FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
 
-                                    databaseReference.child("sessions").child(getDeviceId())
-                                            .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                    if (!snapshot.exists()) {
-                                                        databaseReference.child("sessions")
-                                                                .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
+//                                    databaseReference.child("sessions").child(getDeviceId())
+//                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+//                                                @Override
+//                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                                    if (!snapshot.exists()) {
+//                                                        databaseReference.child("sessions")
+//                                                                .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
+//
+//                                                        continueLogin();
+//                                                        return;
+//                                                    }
+//
+//                                                    if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
+//                                                        continueLogin();
+//                                                    else {
+//                                                        FirebaseAuth.getInstance().signOut();
+//                                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+//                                                        alertDialog.setTitle(getString(R.string.one_login_str));
+//                                                        alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                                                            @Override
+//                                                            public void onClick(DialogInterface dialog, int which) {
+//                                                                dialog.cancel();
+//                                                            }
+//                                                        });
+//                                                        alertDialog.show();
+//                                                    }
+//                                                }
+//
+//                                                private void continueLogin() {
+                                    // CONTINUE LOGIN LOGIC
+                                    assert user != null;
+                                    String personName = user.getDisplayName() + "";
 
-                                                        continueLogin();
-                                                        return;
-                                                    }
+                                    if (user.isEmailVerified()) {
+                                        String[] userName = Objects.requireNonNull(user.getEmail()).split("@");
+                                        UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), userName[0] + id, personName, user.getEmail(), "", "email");
 
-                                                    if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
-                                                        continueLogin();
-                                                    else {
-                                                        FirebaseAuth.getInstance().signOut();
-                                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                        alertDialog.setTitle(getString(R.string.one_login_str));
-                                                        alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.cancel();
-                                                            }
-                                                        });
-                                                        alertDialog.show();
-                                                    }
-                                                }
-
-                                                private void continueLogin() {
-                                                    // CONTINUE LOGIN LOGIC
-                                                    assert user != null;
-                                                    String personName = user.getDisplayName() + "";
-
-                                                    if (user.isEmailVerified()) {
-                                                        String[] userName = Objects.requireNonNull(user.getEmail()).split("@");
-                                                        UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), userName[0] + id, personName, user.getEmail(), "", "email");
-
-                                                    } else {
-                                                        FirebaseAuth.getInstance().signOut();
-                                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                        alertDialog.setTitle(getString(R.string.act_verify_1));
-                                                        alertDialog.setIcon(R.drawable.ic_privacy);
-                                                        alertDialog.setMessage(getString(R.string.act_verify_2));
-                                                        alertDialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
-                                                            @Override
-                                                            public void onClick(DialogInterface dialog, int which) {
-                                                                dialog.cancel();
-                                                            }
-                                                        });
-                                                        alertDialog.show();
-                                                    }
-                                                }
-
-                                                @Override
-                                                public void onCancelled(@NonNull DatabaseError error) {
-                                                    // BREAK SESSION
-                                                    FirebaseAuth.getInstance().signOut();
-                                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                    alertDialog.setTitle(error.toException().getMessage());
-                                                    alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.cancel();
-                                                        }
-                                                    });
-                                                    alertDialog.show();
-                                                }
-                                            });
+                                    } else {
+                                        FirebaseAuth.getInstance().signOut();
+                                        AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+                                        alertDialog.setTitle(getString(R.string.act_verify_1));
+                                        alertDialog.setIcon(R.drawable.ic_privacy);
+                                        alertDialog.setMessage(getString(R.string.act_verify_2));
+                                        alertDialog.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                dialog.cancel();
+                                            }
+                                        });
+                                        alertDialog.show();
+                                    }
+//                                                }
+//
+//                                                @Override
+//                                                public void onCancelled(@NonNull DatabaseError error) {
+//                                                    // BREAK SESSION
+//                                                    FirebaseAuth.getInstance().signOut();
+//                                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+//                                                    alertDialog.setTitle(error.toException().getMessage());
+//                                                    alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                            dialog.cancel();
+//                                                        }
+//                                                    });
+//                                                    alertDialog.show();
+//                                                }
+//                                            });
 
                                 } else {
                                     try {
@@ -605,79 +605,79 @@ public class LoginActivityFragment extends Fragment {
                         try {
                             if (task.isSuccessful()) {
 
+//                                databaseReference.child("sessions").child(getDeviceId())
+//                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+//
+//                                            @Override
+//                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                                if (!snapshot.exists()) {
+//                                                    databaseReference.child("sessions")
+//                                                            .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
+//
+//                                                    continueLogin();
+//                                                    return;
+//                                                }
+//
+//                                                if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
+//                                                    continueLogin();
+//                                                else {
+//                                                    FirebaseAuth.getInstance().signOut();
+//                                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+//                                                    alertDialog.setTitle(getString(R.string.one_login_str));
+//                                                    alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                                                        @Override
+//                                                        public void onClick(DialogInterface dialog, int which) {
+//                                                            dialog.cancel();
+//                                                        }
+//                                                    });
+//                                                    alertDialog.show();
+//                                                }
+//
+//                                            }
+//
+//                                            private void continueLogin() {
+//                                                // CONTINUE LOGIN LOGIC
+                                //Sign in success, update UI with the signed-in user's information
+                                boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
+                                FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
+                                assert user != null;
+                                String personName = user.getDisplayName();
+                                if (personName.contains(" ")) {
+                                    personName = personName.substring(0, personName.indexOf(" "));
+                                }
+                                String referCode = "";
 
-                                databaseReference.child("sessions").child(getDeviceId())
-                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                if (user.getEmail() != null) {
+                                    String[] userName = user.getEmail().split("@");
+                                    referCode = userName[0];
+                                } else {
+                                    referCode = user.getPhoneNumber();
+                                }
+                                if (isNew) {
+                                    hideProgressDialog();
+                                    ShowReferDialog(user.getUid(), referCode + id, personName, "" + user.getEmail(), user.getPhotoUrl().toString(), "fb");
+                                } else
+                                    UserSignUpWithSocialMedia(user.getUid(), "", referCode + id, personName, "" + user.getEmail(), user.getPhotoUrl().toString(), "fb");
+//                                            }
+//
+//                                            @Override
+//                                            public void onCancelled(@NonNull DatabaseError error) {
+//                                                // BREAK SESSION
+//                                                LoginManager.getInstance().logOut();
+//                                                LoginTabActivity.mAuth.signOut();
+//                                                hideProgressDialog();
+//                                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+//                                                alertDialog.setTitle(error.toException().getMessage());
+//                                                alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                        dialog.cancel();
+//                                                    }
+//                                                });
+//                                                alertDialog.show();
+//                                            }
+//                                        });
 
-                                            @Override
-                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                if (!snapshot.exists()) {
-                                                    databaseReference.child("sessions")
-                                                            .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
-
-                                                    continueLogin();
-                                                    return;
-                                                }
-
-                                                if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
-                                                    continueLogin();
-                                                else {
-                                                    FirebaseAuth.getInstance().signOut();
-                                                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                    alertDialog.setTitle(getString(R.string.one_login_str));
-                                                    alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                                        @Override
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.cancel();
-                                                        }
-                                                    });
-                                                    alertDialog.show();
-                                                }
-
-                                            }
-
-                                            private void continueLogin() {
-                                                // CONTINUE LOGIN LOGIC
-                                                //Sign in success, update UI with the signed-in user's information
-                                                boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
-                                                FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
-                                                assert user != null;
-                                                String personName = user.getDisplayName();
-                                                if (personName.contains(" ")) {
-                                                    personName = personName.substring(0, personName.indexOf(" "));
-                                                }
-                                                String referCode = "";
-
-                                                if (user.getEmail() != null) {
-                                                    String[] userName = user.getEmail().split("@");
-                                                    referCode = userName[0];
-                                                } else {
-                                                    referCode = user.getPhoneNumber();
-                                                }
-                                                if (isNew) {
-                                                    hideProgressDialog();
-                                                    ShowReferDialog(user.getUid(), referCode + id, personName, "" + user.getEmail(), user.getPhotoUrl().toString(), "fb");
-                                                } else
-                                                    UserSignUpWithSocialMedia(user.getUid(), "", referCode + id, personName, "" + user.getEmail(), user.getPhotoUrl().toString(), "fb");
-                                            }
-
-                                            @Override
-                                            public void onCancelled(@NonNull DatabaseError error) {
-                                                // BREAK SESSION
-                                                LoginManager.getInstance().logOut();
-                                                LoginTabActivity.mAuth.signOut();
-                                                hideProgressDialog();
-                                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                alertDialog.setTitle(error.toException().getMessage());
-                                                alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.cancel();
-                                                    }
-                                                });
-                                                alertDialog.show();
-                                            }
-                                        });
                             } else {
                                 // If sign in fails, display a message to the user.
 
@@ -712,75 +712,75 @@ public class LoginActivityFragment extends Fragment {
                         if (task.isSuccessful()) {
 
 
-                            databaseReference.child("sessions").child(getDeviceId())
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if (!snapshot.exists()) {
-                                                databaseReference.child("sessions")
-                                                        .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
+//                            databaseReference.child("sessions").child(getDeviceId())
+//                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                            if (!snapshot.exists()) {
+//                                                databaseReference.child("sessions")
+//                                                        .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
+//
+//                                                continueLogin();
+//                                                return;
+//                                            }
+//
+//                                            if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
+//                                                continueLogin();
+//                                            else {
+//                                                FirebaseAuth.getInstance().signOut();
+//                                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+//                                                alertDialog.setTitle(getString(R.string.one_login_str));
+//                                                alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                        dialog.cancel();
+//                                                    }
+//                                                });
+//                                                alertDialog.show();
+//                                            }
+//                                        }
+//
+//                                        private void continueLogin() {
+                            // CONTINUE LOGIN LOGIC
+                            //Sign in success, update UI with the signed-in user's information
+                            boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
+                            FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
 
-                                                continueLogin();
-                                                return;
-                                            }
+                            assert user != null;
+                            String personName = user.getDisplayName();
 
-                                            if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
-                                                continueLogin();
-                                            else {
-                                                FirebaseAuth.getInstance().signOut();
-                                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                alertDialog.setTitle(getString(R.string.one_login_str));
-                                                alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.cancel();
-                                                    }
-                                                });
-                                                alertDialog.show();
-                                            }
-                                        }
-
-                                        private void continueLogin() {
-                                            // CONTINUE LOGIN LOGIC
-                                            //Sign in success, update UI with the signed-in user's information
-                                            boolean isNew = task.getResult().getAdditionalUserInfo().isNewUser();
-                                            FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
-
-                                            assert user != null;
-                                            String personName = user.getDisplayName();
-
-                                            if (personName.contains(" ")) {
-                                                personName = personName.substring(0, personName.indexOf(" "));
-                                            }
-                                            String email = user.getEmail();
-                                            String[] userName = user.getEmail().split("@");
+                            if (personName.contains(" ")) {
+                                personName = personName.substring(0, personName.indexOf(" "));
+                            }
+                            String email = user.getEmail();
+                            String[] userName = user.getEmail().split("@");
 
 
-                                            if (isNew) {
-                                                hideProgressDialog();
-                                                ShowReferDialog(user.getUid(), userName[0] + id, personName, email, user.getPhotoUrl().toString(), "gmail");
-                                            } else
-                                                UserSignUpWithSocialMedia(user.getUid(), "", userName[0] + id, user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), "gmail");
+                            if (isNew) {
+                                hideProgressDialog();
+                                ShowReferDialog(user.getUid(), userName[0] + id, personName, email, user.getPhotoUrl().toString(), "gmail");
+                            } else
+                                UserSignUpWithSocialMedia(user.getUid(), "", userName[0] + id, user.getDisplayName(), user.getEmail(), user.getPhotoUrl().toString(), "gmail");
 
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            // BREAK SESSION
-                                            LoginManager.getInstance().logOut();
-                                            LoginTabActivity.mAuth.signOut();
-                                            hideProgressDialog();
-                                            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                            alertDialog.setTitle(error.toException().getMessage());
-                                            alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.cancel();
-                                                }
-                                            });
-                                            alertDialog.show();
-                                        }
-                                    });
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(@NonNull DatabaseError error) {
+//                                            // BREAK SESSION
+//                                            LoginManager.getInstance().logOut();
+//                                            LoginTabActivity.mAuth.signOut();
+//                                            hideProgressDialog();
+//                                            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+//                                            alertDialog.setTitle(error.toException().getMessage());
+//                                            alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int which) {
+//                                                    dialog.cancel();
+//                                                }
+//                                            });
+//                                            alertDialog.show();
+//                                        }
+//                                    });
 
                         } else {
                             hideProgressDialog();
@@ -1028,54 +1028,54 @@ public class LoginActivityFragment extends Fragment {
                         if (task.isSuccessful()) {
                             FirebaseUser user = LoginTabActivity.mAuth.getCurrentUser();
 
-                            databaseReference.child("sessions").child(getDeviceId())
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if (!snapshot.exists()) {
-                                                databaseReference.child("sessions")
-                                                        .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
-
-                                                UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
-
-                                                return;
-                                            }
-
-                                            if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
-                                                UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
-
-                                            else {
-                                                FirebaseAuth.getInstance().signOut();
-                                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                                alertDialog.setTitle(getString(R.string.one_login_str));
-                                                alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                                    @Override
-                                                    public void onClick(DialogInterface dialog, int which) {
-                                                        dialog.cancel();
-                                                    }
-                                                });
-                                                alertDialog.show();
-                                            }
-
-
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                            // BREAK SESSION
-                                            hideProgressDialog();
-                                            FirebaseAuth.getInstance().signOut();
-                                            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
-                                            alertDialog.setTitle(error.toException().getMessage());
-                                            alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialog, int which) {
-                                                    dialog.cancel();
-                                                }
-                                            });
-                                            alertDialog.show();
-                                        }
-                                    });
+//                            databaseReference.child("sessions").child(getDeviceId())
+//                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+//                                        @Override
+//                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                            if (!snapshot.exists()) {
+//                                                databaseReference.child("sessions")
+//                                                        .child(getDeviceId()).setValue(LoginTabActivity.mAuth.getUid());
+//
+                            UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
+//
+//                                                return;
+//                                            }
+//
+//                                            if (snapshot.getValue(String.class).equals(LoginTabActivity.mAuth.getUid()))
+//                                                UserSignUpWithSocialMedia(user.getUid(), Session.getFCode(getActivity()), name + id, name, "", "", "mobile", phoneNumber);
+//
+//                                            else {
+//                                                FirebaseAuth.getInstance().signOut();
+//                                                AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+//                                                alertDialog.setTitle(getString(R.string.one_login_str));
+//                                                alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                                                    @Override
+//                                                    public void onClick(DialogInterface dialog, int which) {
+//                                                        dialog.cancel();
+//                                                    }
+//                                                });
+//                                                alertDialog.show();
+//                                            }
+//
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void onCancelled(@NonNull DatabaseError error) {
+//                                            // BREAK SESSION
+//                                            hideProgressDialog();
+//                                            FirebaseAuth.getInstance().signOut();
+//                                            AlertDialog.Builder alertDialog = new AlertDialog.Builder(getActivity());
+//                                            alertDialog.setTitle(error.toException().getMessage());
+//                                            alertDialog.setPositiveButton("ok", new DialogInterface.OnClickListener() {
+//                                                @Override
+//                                                public void onClick(DialogInterface dialog, int which) {
+//                                                    dialog.cancel();
+//                                                }
+//                                            });
+//                                            alertDialog.show();
+//                                        }
+//                                    });
 
                         } else {
                             String message = "Something is wrong, we will fix it soon...";
