@@ -93,6 +93,8 @@ public class SignUpFragment extends Fragment {
                                         public void onComplete(@NonNull Task<AuthResult> task) {
                                             if (task.isSuccessful()) {
                                                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                                databaseReference.child("sessions")
+                                                        .child(getDeviceId()).setValue(user.getUid());
                                                 UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                                                         .setDisplayName(name).build();
                                                 assert user != null;
